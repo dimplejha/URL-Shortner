@@ -1,5 +1,8 @@
 const urlModel = require("../models/urlModel")
 let axios = require("axios")
+const shortid = require('shortid')
+const validUrl = require('valid-url')
+
 
 
 const isValid = function(value){
@@ -8,46 +11,65 @@ const isValid = function(value){
     return true
 }
 
+const baseUrl = 'http://localhost:3000'
+
 const createUrl = async function(req,res){
-try{
+    
+    data=req.body 
+    
+    const {longUrl} = data
 
-    let data = req.body
+    if (!Object.keys(data).length>0) {return res.status(400).send({status: false, message: "please iput Some data"})}
 
-if(!isValid(data)){return res.status.send({status:false, message : "please provide data"})}
+if(!isValid(longUrl)){return res.status(400).send({status:false, message: "please input longUrl"})}
 
-if(!isValid(data.longUrl)){return res.status(400).send({status:false, message : "please provide longUrl"})}
+if(!(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/.test(longUrl))){
 
-    if(!(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/.test(data.longUrl))){
-        return res.send(400).send({status:false, message : "Please input a valid url"})
+    return res.status(400).send({status:false, message: "please enter a valid URL"})
+}
+
+    if (!validUrl.isUri(baseUrl)) {
+        return res.status(401).send('Invalid base URL')
     }
 
-const savedData = await urlModel.create(data)
+    const urlCode = shortid.generate()
 
-return res.status(201).send({status: true, message: savedData})
 
-}catch (error){
-    return res.status(500).send({status:false, message:error.message})
+    if (validUrl.isUri(longUrl)) {
+        try {
+           
+            let url = await urlModel.findOne({longUrl})
 
+            if (url) {
+               return res.status(200).send({status:false,message: "url already exist"})
+               
+            } else {
+          
+                const shortUrl = baseUrl + '/' + urlCode
+
+                url = await urlModel.create({longUrl,shortUrl,urlCode})
+          
+               return res.status(201).send({status:true, message:url})
+            }
+
+ }catch (err) {
+           
+           return res.status(500).send('Server Error')
+        }
+    
 }}
 
 
 
 let getUrl = async function (req, res) {
+const data = req.params.urlCode
 
-    try {
-        let options = {
-            method: 'get',
-            url: ''
-        }
-        let result = await axios(options);
-        console.log(result)
-        let data = result.data
-        res.status(200).send({ msg: data, status: true })
-    }
-    catch (err) {
-        console.log(err)
-        res.status(500).send({ msg: err.message })
-    }
+const output = await urlModel.findOne({urlCode:data})
+
+if(!output){return res.status(404).send({status:false, message: "not found"})}
+
+return res.status(200).redirect(output.longUrl)
+
 }
 
 

@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const mongoose = require('mongoose')
 
-mongoose.connect("mongodb+srv://functionup-cohort:G0Loxqc9wFEGyEeJ@cluster0.rzotr.mongodb.net/Manish87698-DB?retryWrites=true&w=majority", {useNewUrlParser: true})
+mongoose.connect("mongodb+srv://dimplejha_17:osVxDHqCJxxpeWGN@cluster0.ut3on.mongodb.net/group17Database?retryWrites=true&w=majority", {useNewUrlParser: true})
     .then(() => console.log('mongodb running on 27017'))
     .catch(err => console.log(err))
 
