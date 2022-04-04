@@ -1,5 +1,8 @@
 # Thoriumc
+
 group members name- Manish Kumar, Dimple Jha
+repoLink: https://github.com/Manish-162403/project-urlShortnerGroup17.git
+branch:  https://github.com/Manish-162403/project-urlShortnerGroup17
 ## Scalable URL Shortner Project Requirement
 
 ## Phase I
