@@ -1,5 +1,5 @@
 # Thoriumc
-
+group members name- Manish Kumar, Dimple Jha
 ## Scalable URL Shortner Project Requirement
 
 ## Phase I
